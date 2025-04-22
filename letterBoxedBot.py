@@ -45,11 +45,8 @@ def validFinder(w, l_lists):
     curr_lists = set()
     prev_lists = set()
 
-
     for c in i:
-
         if c == 0:
-            p = c
             # get the list that c is from
             prev_lists = letterFinder(c, letter_list)
             continue
@@ -57,9 +54,11 @@ def validFinder(w, l_lists):
         # if either of the lists have multiple sides or are different from each other continue to next letter
         # and update variables
         if not (len(curr_lists) == 1 and len(prev_lists) == 1 and curr_lists == prev_lists):
-
-            p = c
+            if c == len(i):
+                return i
             prev_lists = curr_lists
+            continue
+        return
 
 
 
@@ -78,6 +77,9 @@ letters = letters + "|" + input().replace(" ", "|")
 
 letter_list = {lettersT, lettersB, lettersL, lettersR}
 words = wordFinder(letters)
+
+letters.replace("|", "")
+
 
 # we have a large list of words that can be spelt using only the letters available
 # now we need to take those words
@@ -112,9 +114,39 @@ right = 4
 valid_words = set()
 
 for i in words:
+    valid_words.add(validFinder(i, letter_list))
+
+valid_combos = []
+low = 9999
+# go through all the words making combination sets of words that
+# B: start with the letter of the previous words last letter
+# A: contain all letter (use regex?)
+
+# A: iterate through all words
+# take a word add it to the set, if the set uses all letters add set to combo set
+# if not through it away and move to next word
+# once through all the words add the next
+
+current_combo = []
+
+for i in valid_words:
+    current_combo.append(i)
+    for m in valid_words:
+        # if current word combination satisfies
+        if all(x in current_combo for x in letters):
+            valid_combos.append(current_combo)
 
 
-
+            # if it is equal to or lower than the current low add it to shortest
+            # and remove no longer short combos
+            """
+            if len(current_combo) <= low:
+                shortest_combos.append(current_combo)
+                low = len(current_combo)
+        for i in shortest_combos:
+            if len(i) > low:
+                shortest_combos.remove(i)
+            """
 print("Here is your board:")
 print("  " + " ".join(lettersT))
 for i in range(len(lettersL)):
