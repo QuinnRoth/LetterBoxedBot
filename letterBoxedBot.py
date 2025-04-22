@@ -126,27 +126,83 @@ low = 9999
 # take a word add it to the set, if the set uses all letters add set to combo set
 # if not through it away and move to next word
 # once through all the words add the next
+# we have a max of 3 words per combo
+# we add first word
+#iterate through
+# i   j   k
+# w1  w2  w3
+# w1  w2  w4
+# w1  w2  w5
 
+# w1  w3  w4
+# w1  w3  w5
+
+# w1  w4  w5
+# w1  w4  w6
+
+# w1  w5  w6
+# w1  w5  w7
+
+# w2  w3  w4
+# w2  w3  w5
 current_combo = []
 
 for i in valid_words:
-    current_combo.append(i)
-    for m in valid_words:
-        # if current word combination satisfies
+    current_combo[0] = i
+    j = i+1
+    if all(x in current_combo for x in letters):
+        valid_combos.append(current_combo)
+    for j in valid_words:
+        current_combo[1] = j
+        k = j + 1
         if all(x in current_combo for x in letters):
             valid_combos.append(current_combo)
+        for k in valid_words:
+            current_combo[2] = k
+            if all(x in current_combo for x in letters):
+                valid_combos.append(current_combo)
 
 
-            # if it is equal to or lower than the current low add it to shortest
-            # and remove no longer short combos
-            """
-            if len(current_combo) <= low:
-                shortest_combos.append(current_combo)
-                low = len(current_combo)
-        for i in shortest_combos:
-            if len(i) > low:
-                shortest_combos.remove(i)
-            """
+shortest_combos = []
+
+for combo in valid_combos:
+    if len(combo) == 1:
+        shortest_combos.append(combo)
+if len(shortest_combos) > 0:
+    print("Your shortest combo/s is: ")
+    for combos in shortest_combos:
+        for word in combos:
+            print(word)
+    print("\n")
+    quit()
+
+for combo in valid_combos:
+    # if regex: capture the last letter of both words, match if captured letter is at start of word 1 or 2
+    # capture both last letters into separate variables,
+    # match if l1 is a start of word 2, match if l2 is at start of word 1
+    # if there are 3 words
+    # capture all last letters into separate variables
+    # match if there is a
+    #
+    continue
+
+
+
+
+
+# if it is equal to or lower than the current low add it to shortest
+# and remove no longer short combos
+if len(current_combo) <= low:
+    shortest_combos.append(current_combo)
+    low = len(current_combo)
+    for i in shortest_combos:
+        if len(i) > low:
+            shortest_combos.remove(i)
+
+
+
+
+
 print("Here is your board:")
 print("  " + " ".join(lettersT))
 for i in range(len(lettersL)):
