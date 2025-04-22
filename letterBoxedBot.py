@@ -1,6 +1,5 @@
-import nltk
 import re
-from nltk import word_tokenize
+import itertools
 
 
 #word rules:
@@ -41,45 +40,60 @@ def letterFinder(l, l_lists):
             in_lists.add(w)
     return in_lists
 
+
 def validFinder(w, l_lists):
     curr_lists = set()
     prev_lists = set()
 
-    for c in i:
+    for c in w:
         if c == 0:
             # get the list that c is from
-            prev_lists = letterFinder(c, letter_list)
+            prev_lists = letterFinder(c, l_lists)
             continue
-        curr_lists = letterFinder(c, letter_list)
+        curr_lists = letterFinder(c, l_lists)
         # if either of the lists have multiple sides or are different from each other continue to next letter
         # and update variables
         if not (len(curr_lists) == 1 and len(prev_lists) == 1 and curr_lists == prev_lists):
-            if c == len(i):
-                return i
+            if c == len(w):
+                return w
             prev_lists = curr_lists
             continue
         return
 
 
+def is_valid_chain(words):
+    # Generate all permutations of the three words
+    for perm in itertools.permutations(words):
+        w1, w2, w3 = perm
+        if w1[-1] == w2[0] and w2[-1] == w3[0]:
+            return perm
+    return None
 
 print("Please Enter the letters on the top separated by a space:")
-lettersT = input().split()
-letters = input().replace(" ", "|")
-print("Please Enter the letters on the bottom separated by a space:")
-lettersB = input().split()
-letters = letters + "|" + input().replace(" ", "|")
-print("Please Enter the letters on the left side separated by a space:")
-lettersL = input().split()
-letters = letters + "|" + input().replace(" ", "|")
-print("Please Enter the letters on the right side separated by a space:")
-lettersR = input().split()
-letters = letters + "|" + input().replace(" ", "|")
+top_input = input()
+lettersT = top_input.split()
+letters = top_input.replace(" ", "|")
 
-letter_list = {lettersT, lettersB, lettersL, lettersR}
+print("Please Enter the letters on the bottom separated by a space:")
+bottom_input = input()
+lettersB = bottom_input.split()
+letters += "|" + bottom_input.replace(" ", "|")
+
+print("Please Enter the letters on the left side separated by a space:")
+left_input = input()
+lettersL = left_input.split()
+letters += "|" + left_input.replace(" ", "|")
+
+print("Please Enter the letters on the right side separated by a space:")
+right_input = input()
+lettersR = right_input.split()
+letters += "|" + right_input.replace(" ", "|")
+
+# Use a list or dictionary instead of a set
+letter_lists = [lettersT, lettersB, lettersL, lettersR]
 words = wordFinder(letters)
 
 letters.replace("|", "")
-
 
 # we have a large list of words that can be spelt using only the letters available
 # now we need to take those words
@@ -149,7 +163,7 @@ current_combo = []
 
 for i in valid_words:
     current_combo[0] = i
-    j = i+1
+    j = i + 1
     if all(x in current_combo for x in letters):
         valid_combos.append(current_combo)
     for j in valid_words:
@@ -161,7 +175,6 @@ for i in valid_words:
             current_combo[2] = k
             if all(x in current_combo for x in letters):
                 valid_combos.append(current_combo)
-
 
 shortest_combos = []
 
@@ -181,24 +194,25 @@ for combo in valid_combos:
     # capture both last letters into separate variables,
     # match if l1 is a start of word 2, match if l2 is at start of word 1
     # if there are 3 words
-    # capture all last letters into separate variables
-    # match if there is a
-    #
-    continue
+    # get all first letters
+    # get all last letters
+    # we don't want a word matching with itself
+    # if [0] = /[1] or /[2]
+    # if [1] = /[0] or /[2]
+    # if [2] = /[0] or /[1]
+    shortest_combos.append(is_valid_chain(combo))
 
-
-
-
-
-# if it is equal to or lower than the current low add it to shortest
-# and remove no longer short combos
-if len(current_combo) <= low:
-    shortest_combos.append(current_combo)
-    low = len(current_combo)
-    for i in shortest_combos:
-        if len(i) > low:
-            shortest_combos.remove(i)
-
+done = False
+while not done:
+    done = True
+    for current_combo in shortest_combos:
+        # if it is equal to or lower than the current low add it to shortest
+        # and remove no longer short combos
+        if len(current_combo) < low:
+            low = len(current_combo)
+            done = False
+        elif len(current_combo) > low:
+            shortest_combos.remove(current_combo)
 
 
 
@@ -208,3 +222,9 @@ print("  " + " ".join(lettersT))
 for i in range(len(lettersL)):
     print(lettersL[i] + "      " + lettersR[i])
 print("  " + " ".join(lettersB))
+
+print("Your shortest combo/s is: ")
+for combos in shortest_combos:
+    for word in combos:
+        print(word)
+    print("\n")
