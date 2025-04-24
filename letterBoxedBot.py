@@ -96,12 +96,12 @@ def is_valid_chain(word_combination):
 def combo_finder(word_list):
     combo_list = []
 
-#    for perm in combinations(word_list, 3):
-#        combined = ''.join(perm)
-#        if all(letter in combined for letter in letters):
-#            combo_list.append(perm[:])
-#            print("valid combo found")
-#            print(perm)
+    #    for perm in combinations(word_list, 3):
+    #        combined = ''.join(perm)
+    #        if all(letter in combined for letter in letters):
+    #            combo_list.append(perm[:])
+    #            print("valid combo found")
+    #            print(perm)
 
     for i, i_word in enumerate(word_list):
         for j, j_word in enumerate(word_list[i + 1:], start=i + 1):
@@ -126,13 +126,7 @@ def combo_finder(word_list):
     return combo_list
 
 
-print("Debug? 1 (yes) 2 (no)")
-debug = input()
-
-print("How long would you like the combinations to be? 1-3?")
-length = input()
-
-if debug == '2':
+def get_letters():
     print("Please Enter the capitol letters on the top separated by a space:")
     top_input = input()
     lettersT = top_input.split()
@@ -153,9 +147,21 @@ if debug == '2':
     lettersR = right_input.split()
     letters += " " + right_input
     # string of the letters
-    letters.replace(" ", "")
+    letters = letters.replace(" ", "")
     # list of lists of the letters, organized by side
     letter_lists = [lettersT, lettersB, lettersL, lettersR]
+
+    return letters, letter_lists, lettersR, lettersB, lettersL, lettersT
+
+
+print("Debug? 1 (yes) 2 (no)")
+debug = input()
+
+print("How long would you like the combinations to be? 1-3?")
+length = input()
+
+if debug == '2':
+    letters, letter_lists, lettersR, lettersB, lettersL, lettersT = get_letters()
 
 else:
     lettersT = ['I', 'E', 'O']
@@ -163,7 +169,6 @@ else:
     lettersL = ['N', 'Z', 'X']
     lettersR = ['D', 'F', 'A']
     letter_lists = [lettersT, lettersB, lettersL, lettersR]
-
     letters = lettersT + lettersB + lettersL + lettersR
     letters = ''.join(letters)
 
@@ -208,7 +213,8 @@ words = wordFinder(letters)
 # good
 
 valid_words = []
-print(words)
+if debug == '1':
+    print(words)
 for l in words:
     if validFinder(l, letter_lists):
         valid_words.append(l)
@@ -249,12 +255,6 @@ if length == '1':
             print(word)
     quit()
 
-
-
-
-
-
-
 valid_combos = combo_finder(valid_words)
 
 '''
@@ -274,10 +274,6 @@ if len(shortest_combos) > 0:
 for combo in valid_combos:
     if is_valid_chain(combo):
         shortest_combos.append(combo)
-
-for combo in shortest_combos:
-    if len(combo) == 2:
-        print(combo)
 
 print("Your shortest combination/s: ")
 for combos in shortest_combos:
