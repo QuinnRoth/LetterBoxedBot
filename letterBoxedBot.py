@@ -1,5 +1,5 @@
 import itertools
-from itertools import combinations
+from itertools import permutations
 
 
 # word rules:
@@ -80,7 +80,7 @@ def validFinder(w, list_of_lists_of_letters):
 def is_valid_chain(word_combination):
     # generate permutations for 2 word combinations
     if len(word_combination) == 2:
-        for perm in itertools.permutations(word_combination):
+        for perm in permutations(word_combination):
             w1, w2 = perm
             if w1[-1] == w2[0]:
                 return perm
@@ -95,38 +95,33 @@ def is_valid_chain(word_combination):
 
 def combo_finder(word_list):
     combo_list = []
-    """
-    for perm in combinations(word_list, 3):
-        combined = ''.join(perm)
-        if all(letter in combined for letter in letters):
-            combo_list.append(perm[:])
-            print("valid combo found")
-            print(perm)
 
-    """
+#    for perm in combinations(word_list, 3):
+#        combined = ''.join(perm)
+#        if all(letter in combined for letter in letters):
+#            combo_list.append(perm[:])
+#            print("valid combo found")
+#            print(perm)
+
     for i, i_word in enumerate(word_list):
-        combo1 = [i_word]
-        combined1 = set("".join(combo1))
-        if all(letter in combined1 for letter in letters):
-            combo_list.append(combo1[:])
-            print("valid combo found")
-            print(combo1)
-
         for j, j_word in enumerate(word_list[i + 1:], start=i + 1):
-            combo2 = [i_word, j_word]
-            combined2 = set("".join(combo2))
-            if all(letter in combined2 for letter in letters):
-                combo_list.append(combo2[:])
-                print("valid combo found")
-                print(combo2)
-            if length == 3:
+            if length == '2':
+                combo2 = [i_word, j_word]
+                combined2 = set("".join(combo2))
+                if all(letter in combined2 for letter in letters):
+                    combo_list.append(combo2[:])
+                    if debug == '1':
+                        print("valid combo found")
+                        print(combo2)
+            if length == '3':
                 for k, k_word in enumerate(word_list[j + 1:], start=j + 1):
                     combo3 = [i_word, j_word, k_word]
                     combined3 = set("".join(combo3))
                     if all(letter in combined3 for letter in letters):
                         combo_list.append(combo3[:])
-                        print("valid combo found")
-                        print(combo3)
+                        if debug == '1':
+                            print("valid combo found")
+                            print(combo3)
 
     return combo_list
 
@@ -137,7 +132,7 @@ debug = input()
 print("How long would you like the combinations to be? 1-3?")
 length = input()
 
-if debug == 2:
+if debug == '2':
     print("Please Enter the capitol letters on the top separated by a space:")
     top_input = input()
     lettersT = top_input.split()
@@ -172,6 +167,16 @@ else:
     letters = lettersT + lettersB + lettersL + lettersR
     letters = ''.join(letters)
 
+print("Here is your board:")
+print("  " + " ".join(lettersT))
+for it in range(len(lettersL)):
+    print(lettersL[it] + "      " + lettersR[it])
+print("  " + " ".join(lettersB))
+
+print("---")
+print("loading combinations...")
+print("---")
+
 # list of words that can be spelled with the letters
 words = wordFinder(letters)
 
@@ -204,9 +209,9 @@ words = wordFinder(letters)
 
 valid_words = []
 print(words)
-for i in words:
-    if validFinder(i, letter_lists):
-        valid_words.append(i)
+for l in words:
+    if validFinder(l, letter_lists):
+        valid_words.append(l)
 
 # go through all the words making combination sets of words that
 # B: start with the letter of the previous words last letter
@@ -237,15 +242,17 @@ for i in words:
 # w2  w3  w5
 
 
-if length == 1:
+if length == '1':
     print("One word answers to the Letter Boxed:")
     for word in valid_words:
         if all(letter in word for letter in letters):
             print(word)
-        else:
-            print("No one word answers for today's Letter Boxed")
-            quit()
     quit()
+
+
+
+
+
 
 
 valid_combos = combo_finder(valid_words)
@@ -264,7 +271,6 @@ if len(shortest_combos) > 0:
         print(combos)
     quit()
 
-
 for combo in valid_combos:
     if is_valid_chain(combo):
         shortest_combos.append(combo)
@@ -272,13 +278,6 @@ for combo in valid_combos:
 for combo in shortest_combos:
     if len(combo) == 2:
         print(combo)
-
-
-print("Here is your board:")
-print("  " + " ".join(lettersT))
-for i in range(len(lettersL)):
-    print(lettersL[i] + "      " + lettersR[i])
-print("  " + " ".join(lettersB))
 
 print("Your shortest combination/s: ")
 for combos in shortest_combos:
